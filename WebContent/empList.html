@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$.ajax({
+			url:"EmpServlet?action=list",
+			dataType:"json",
+			success: function(result){
+				console.log(result);
+				showTable(result);		
+			}
+		});
+	});
+	function showTable(elem){
+		var table, tr, th, td;
+		table = $("<table />").attr("border", "1");
+		table.attr("cellpadding", "5px");
+		tr = $("<tr />");
+		//th = $("<th />").text("EmpNo");
+		//tr.append(th);
+		//th = $("<th />").text("FirstName");
+		//tr.append(th);
+		//th = $("<th />").text("LastName");
+		//tr.append(th);
+		//th = $("<th />").text("Delete");
+		for(title in elem[0]){
+			th = $("<th />").text(title);
+		tr.append(th);
+		}
+		th = $("<th />").text("Delete");
+		tr.append(th);
+		table.append(tr);
+		// t data 
+		// webSchool/jqueryAjax/ListEmployee.jsp 참고 할 것.
+		for(var i=0; i<elem.length; i++){
+		tr = $("<tr />").attr("align", "center");
+		tr.attr("id", elem[i].employeeId);
+		
+		var aTag = $("<a />").attr("href","updateForm.jsp?empId="+elem[i].employeeId);
+		var delbtn = $("<button />").text("Del");
+		//var delbtn = $("<button />").attr({"id", elem[i].employeeId}.text("Del")); // delete 버튼에 직접 id값 지정
+		delbtn.click(delfunc);
+		
+		td = $("<td />").text(elem[i].firstName);
+		tr.append(td);
+		td = $("<td />").text(elem[i].jobId);
+		tr.append(td);
+		td = $("<td />").text(elem[i].lastName);
+		tr.append(td);
+		td = $("<td />").text(elem[i].hireDate);
+		tr.append(td);
+		td = $("<td />").text(elem[i].phoneNumber);
+		tr.append(td);
+		td = $("<td />").html(aTag.text(elem[i].employeeId));
+		tr.append(td);
+		td = $("<td />").text(elem[i].salary);
+		tr.append(td);
+		td = $("<td />").text(elem[i].email);
+		tr.append(td);
+		td = $("<td />").html(delbtn);
+		tr.append(td);
+		table.append(tr);
+		}
+		$("#show").append(table);
+		
+	}
+	
+	function delfunc(){
+		console.log(this);
+		var empId = $(this).parent().parent().attr("id");
+		$(this).parent().parent().remove();
+		$.ajax({
+			url:"EmpServlet",
+			//url:"EmpServlet?action=delete&empId="+ empId,
+			data: {"empId": empId, "action": "delete"}, 
+			success: function(result){
+				console.log("delete sucess");
+						
+			}
+		});
+		
+	}
+</script>
+</head>
+<body>
+	<p><a href="insertEmp.jsp">입력화면</a></p>
+	<div id="show"></div>
+</body>
+</html>
